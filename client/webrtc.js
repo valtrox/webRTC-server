@@ -38,10 +38,6 @@ function createOffer() {
 
     // Creem el dataChannel
     localChannel = local.createDataChannel('test1', dataChannelOptions);
-    localChannel.onopen = onChannelStateChange;
-    localChannel.onclose = onChannelStateChange;
-    localChannel.onerror = onChannelStateChange;
-    localChannel.onmessage = onMessageRecive;
 
     var offerOptions = {
             offerToReceiveAudio: 0,
@@ -139,6 +135,13 @@ function onChannelStateChange(evt) {
 
 }
 
+// Eliminem les instancies un cop el Datachannel es tanca
+function onChannelClosed(){
+    localChannel = null;
+    local.close();
+    local = null;
+}
+
 
 /* Aquesta funcio salta quan la conexio RTC s'ha establert
  * i automaticament l'altre peer li envia el datachannel
@@ -148,9 +151,10 @@ function onDataChannel(evt) {
 
     localChannel = evt.channel;
     localChannel.onopen = onChannelStateChange;
-    localChannel.onclose = onChannelStateChange;
+    localChannel.onclose = onChannelClosed;
     localChannel.onerror = onChannelStateChange;
     localChannel.onmessage = onMessageRecive;
+
 
 }
 
